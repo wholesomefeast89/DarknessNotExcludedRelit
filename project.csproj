@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <BaseName>DarknessNotExcluded</BaseName>
-    <Version>1.4.0</Version>
+    <BaseName>DarknessNotExcludedRelit</BaseName>
+    <Version>1.4.1</Version>
     <MinSupportedGameBuild>999999</MinSupportedGameBuild>
     <AssemblyVersion>$(Version).0</AssemblyVersion>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <RootNamespace>$(BaseName)</RootNamespace>
     <AssemblyName>$(BaseName).mod</AssemblyName>
     <NoWarn>CS0649</NoWarn>
@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-    <GameLibsDir>E:\SteamLibrary\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameLibsDir>
+    <GameLibsDir>C:\Programs\Steam\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameLibsDir>
     <LocalModsDir>$(UserProfile)\Documents\Klei\OxygenNotIncluded\mods\Local</LocalModsDir>
   </PropertyGroup>
   <PropertyGroup>
@@ -34,39 +34,39 @@
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
     <PackageReference Include="PLib" Version="4.19.0" />
     <Reference Include="0Harmony">
-      <HintPath>..\..\..\New folder\0Harmony.dll</HintPath>
+      <HintPath>$(GameLibsDir)\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\New folder\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(GameLibsDir)\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\New folder\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>$(GameLibsDir)\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
 
     <Reference Include="System" />
 
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\..\New folder\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>$(GameLibsDir)\Unity.TextMeshPro.dll</HintPath>
     </Reference>
 
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\New folder\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(GameLibsDir)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
 
     <Reference Include="UnityEngine.TextCoreTextEngineModule">
-      <HintPath>..\..\..\New folder\UnityEngine.TextCoreTextEngineModule.dll</HintPath>
+      <HintPath>$(GameLibsDir)\UnityEngine.TextCoreTextEngineModule.dll</HintPath>
     </Reference>
 
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>..\..\..\New folder\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>$(GameLibsDir)\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
 
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\..\New folder\UnityEngine.UI.dll</HintPath>
+      <HintPath>$(GameLibsDir)\UnityEngine.UI.dll</HintPath>
     </Reference>
 
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>..\..\..\New folder\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>$(GameLibsDir)\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
 

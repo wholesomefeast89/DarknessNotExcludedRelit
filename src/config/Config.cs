@@ -43,7 +43,14 @@ namespace DarknessNotIncluded
     [Option("Block visibility through walls", "Hides tiles/cells from line of sight when blocked by solid tiles.", "Darkness")]
     public bool occludeVisibilityByWalls { get; set; }
 
+    [Option("Block visibility through artificial walls only", "When 'Block visibility through walls' is off, this softer variant still blocks line of sight through opaque built structures (constructed tiles, Ruins) while natural minerals remain transparent. Transparent structures like Glass, Mesh or Airflow Tiles never block sight.", "Darkness")]
+    public bool occludeVisibilityByArtificialWallsOnly { get; set; }
+
     // Exploration
+
+    [Option("Minimum vision radius (tiles)", "The minimum number of tiles a Duplicant can always see around themselves, even with no active light source.", "Exploration")]
+    [Limit(1, 10)]
+    public int minimumVisionRadius { get; set; } = 1;
 
     [Option("Perform actions on unexplored cells", "Whether you are able to drag actions (like dig) on unexplored cells", "Exploration")]
     public bool dragToolIgnoresVisibility { get; set; }

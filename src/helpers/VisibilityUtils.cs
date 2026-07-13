@@ -39,18 +39,45 @@ namespace DarknessNotIncluded
     {
       if (!Grid.IsValidCell(cell)) return false;
 
+      bool strictOcclusion = false;
+      bool artificialOnly = false;
       try
       {
         var cfg = Config.instance;
-        if (cfg != null && !cfg.occludeVisibilityByWalls)
-          return false;
+        if (cfg != null)
+        {
+          strictOcclusion = cfg.occludeVisibilityByWalls;
+          artificialOnly = cfg.occludeVisibilityByArtificialWallsOnly;
+        }
       }
       catch { }
 
-      if (Grid.Solid[cell]) return true;
+      // Neither mode is active - nothing blocks sight.
+      if (!strictOcclusion && !artificialOnly) return false;
 
-      var obj = Grid.Objects[cell, (int)ObjectLayer.Building];
-      if (obj != null) return true;
+      // Strict mode: any solid cell or any building blocks sight (original behavior).
+      if (strictOcclusion)
+      {
+        if (Grid.Solid[cell]) return true;
+
+        var obj = Grid.Objects[cell, (int)ObjectLayer.Building];
+        if (obj != null) return true;
+
+        return false;
+      }
+
+      // Artificial-only mode: only opaque, constructed tiles (built by dupes or
+      // pre-placed Ruins) block sight. Transparent constructions (Glass, Mesh,
+      // Airflow Tiles) let light through per Grid.Transparent, so we let sight
+      // through as well. Natural minerals (Sandstone, Granite, Abyssalite, ores,
+      // Dirt, Slime etc.) have no object in the FoundationTile layer and remain
+      // fully transparent to sight.
+      try
+      {
+        var foundation = Grid.Objects[cell, (int)ObjectLayer.FoundationTile];
+        if (foundation != null && !Grid.Transparent[cell]) return true;
+      }
+      catch { }
 
       return false;
     }
@@ -133,34 +160,69 @@ namespace DarknessNotIncluded
       }
     }
 
+    public static void RevealCircle(int originCell, int radius)
+    {
+      try
+      {
+        if (!Grid.IsValidCell(originCell)) return;
+
+        var originXY = Grid.CellToXY(originCell);
+        int ox = originXY.x;
+        int oy = originXY.y;
+
+        int r = Math.Max(1, radius);
+        int minx = Math.Max(0, ox - r);
+        int maxx = Math.Min(Grid.WidthInCells - 1, ox + r);
+        int miny = Math.Max(0, oy - r);
+        int maxy = Math.Min(Grid.HeightInCells - 1, oy + r);
+
+        for (int y = miny; y <= maxy; y++)
+        {
+          for (int x = minx; x <= maxx; x++)
+          {
+            int cell = Grid.XYToCell(x, y);
+            if (!Grid.IsValidCell(cell)) continue;
+            if ((x - ox) * (x - ox) + (y - oy) * (y - oy) > r * r) continue;
+
+            try { Grid.Reveal(cell); }
+            catch (Exception ex)
+            {
+              Debug.LogWarning($"[DarknessNotIncluded] RevealCircle Grid.Reveal failed for cell {cell}: {ex}");
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Debug.LogWarning($"[DarknessNotIncluded] RevealCircle threw for originCell {originCell}: {ex}");
+      }
+    }
+
     public static void RevealArea(int originCell, int radius, float innerRadius)
     {
       try
       {
         if (!Grid.IsValidCell(originCell)) return;
 
-        bool occlusionEnabled = false;
+        bool anyOcclusionEnabled = false;
         try
         {
-          occlusionEnabled = Config.instance != null && Config.instance.occludeVisibilityByWalls;
+          if (Config.instance != null)
+          {
+            anyOcclusionEnabled =
+              Config.instance.occludeVisibilityByWalls ||
+              Config.instance.occludeVisibilityByArtificialWallsOnly;
+          }
         }
         catch { }
 
-        if (occlusionEnabled)
+        if (anyOcclusionEnabled)
         {
           RevealWithLineOfSight(originCell, radius);
         }
         else
         {
-          var xy = Grid.CellToXY(originCell);
-          try
-          {
-            GridVisibility.Reveal(xy.x, xy.y, radius, innerRadius);
-          }
-          catch (Exception ex)
-          {
-            Debug.LogWarning($"[DarknessNotIncluded] GridVisibility.Reveal threw for originCell {originCell}: {ex}");
-          }
+          RevealCircle(originCell, radius);
         }
       }
       catch (Exception ex)

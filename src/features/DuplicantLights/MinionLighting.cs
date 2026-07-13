@@ -143,6 +143,74 @@ namespace DarknessNotIncluded.DuplicantLights
           {
             possibleLightTypes.Add(MinionLightType.Rocketry);
           }
+          else if (hat.StartsWith("hat_role_building"))
+          {
+            if (hat == "hat_role_building1") possibleLightTypes.Add(MinionLightType.Building1);
+            else if (hat == "hat_role_building2") possibleLightTypes.Add(MinionLightType.Building2);
+            else if (hat == "hat_role_building3") possibleLightTypes.Add(MinionLightType.Building3);
+            else possibleLightTypes.Add(MinionLightType.Building3);
+          }
+          else if (hat.StartsWith("hat_role_technicals"))
+          {
+            if (hat == "hat_role_technicals1") possibleLightTypes.Add(MinionLightType.Technicals1);
+            else if (hat == "hat_role_technicals2") possibleLightTypes.Add(MinionLightType.Technicals2);
+            else possibleLightTypes.Add(MinionLightType.Technicals2);
+          }
+          else if (hat.StartsWith("hat_role_engineering"))
+          {
+            possibleLightTypes.Add(MinionLightType.Engineering1);
+          }
+          else if (hat == "hat_role_basekeeping2")
+          {
+            possibleLightTypes.Add(MinionLightType.Basekeeping2);
+          }
+          else if (hat == "hat_role_basekeeping1")
+          {
+            possibleLightTypes.Add(MinionLightType.Basekeeping1);
+          }
+          else if (hat.StartsWith("hat_role_farming"))
+          {
+            if (hat == "hat_role_farming1") possibleLightTypes.Add(MinionLightType.Farming1);
+            else if (hat == "hat_role_farming2") possibleLightTypes.Add(MinionLightType.Farming2);
+            else if (hat == "hat_role_farming3") possibleLightTypes.Add(MinionLightType.Farming3);
+            else possibleLightTypes.Add(MinionLightType.Farming3);
+          }
+          else if (hat.StartsWith("hat_role_rancher"))
+          {
+            if (hat == "hat_role_rancher1") possibleLightTypes.Add(MinionLightType.Ranching1);
+            else if (hat == "hat_role_rancher2") possibleLightTypes.Add(MinionLightType.Ranching2);
+            else possibleLightTypes.Add(MinionLightType.Ranching2);
+          }
+          else if (hat.StartsWith("hat_role_cooking"))
+          {
+            if (hat == "hat_role_cooking1") possibleLightTypes.Add(MinionLightType.Cooking1);
+            else if (hat == "hat_role_cooking2") possibleLightTypes.Add(MinionLightType.Cooking2);
+            else possibleLightTypes.Add(MinionLightType.Cooking2);
+          }
+          else if (hat.StartsWith("hat_role_art"))
+          {
+            if (hat == "hat_role_art1") possibleLightTypes.Add(MinionLightType.Arting1);
+            else if (hat == "hat_role_art2") possibleLightTypes.Add(MinionLightType.Arting2);
+            else if (hat == "hat_role_art3") possibleLightTypes.Add(MinionLightType.Arting3);
+            else possibleLightTypes.Add(MinionLightType.Arting3);
+          }
+          else if (hat.StartsWith("hat_role_hauling"))
+          {
+            if (hat == "hat_role_hauling1") possibleLightTypes.Add(MinionLightType.Hauling1);
+            else if (hat == "hat_role_hauling2") possibleLightTypes.Add(MinionLightType.Hauling2);
+            else possibleLightTypes.Add(MinionLightType.Hauling2);
+          }
+          else if (hat.StartsWith("hat_role_medicalaid"))
+          {
+            if (hat == "hat_role_medicalaid1") possibleLightTypes.Add(MinionLightType.Medicine1);
+            else if (hat == "hat_role_medicalaid2") possibleLightTypes.Add(MinionLightType.Medicine2);
+            else if (hat == "hat_role_medicalaid3") possibleLightTypes.Add(MinionLightType.Medicine3);
+            else possibleLightTypes.Add(MinionLightType.Medicine3);
+          }
+          else if (hat == "hat_role_suits1")
+          {
+            possibleLightTypes.Add(MinionLightType.Suits1);
+          }
         }
 
         // Only consider enabled & defined types; pick brightest
