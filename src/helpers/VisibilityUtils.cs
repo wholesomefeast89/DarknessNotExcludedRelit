@@ -98,7 +98,7 @@ namespace DarknessNotIncluded
         int miny = Math.Max(0, oy - r);
         int maxy = Math.Min(Grid.HeightInCells - 1, oy + r);
 
-        Grid.Reveal(origin);
+        RevealIfValid(origin);
         RevealIfValid(Grid.CellAbove(origin));
         RevealIfValid(Grid.CellRight(origin));
         RevealIfValid(Grid.CellBelow(origin));
@@ -131,11 +131,15 @@ namespace DarknessNotIncluded
               if (blocked)
               {
                 if (Grid.LightIntensity[cell] > 0 || Grid.Visible[cell] > 0 || Grid.ExposedToSunlight[cell] > 0)
+                {
                   Grid.Reveal(cell);
+                  Grid.Visible[cell] = 255;
+                }
               }
               else
               {
                 Grid.Reveal(cell);
+                Grid.Visible[cell] = 255;
               }
             }
             catch (Exception ex)
@@ -149,7 +153,11 @@ namespace DarknessNotIncluded
         {
           try
           {
-            if (Grid.IsValidCell(c)) Grid.Reveal(c);
+            if (Grid.IsValidCell(c))
+            {
+              Grid.Reveal(c);
+              Grid.Visible[c] = 255;
+            }
           }
           catch { }
         }
@@ -184,7 +192,11 @@ namespace DarknessNotIncluded
             if (!Grid.IsValidCell(cell)) continue;
             if ((x - ox) * (x - ox) + (y - oy) * (y - oy) > r * r) continue;
 
-            try { Grid.Reveal(cell); }
+            try
+            {
+              Grid.Reveal(cell);
+              Grid.Visible[cell] = 255;
+            }
             catch (Exception ex)
             {
               Debug.LogWarning($"[DarknessNotIncluded] RevealCircle Grid.Reveal failed for cell {cell}: {ex}");
@@ -197,6 +209,9 @@ namespace DarknessNotIncluded
         Debug.LogWarning($"[DarknessNotIncluded] RevealCircle threw for originCell {originCell}: {ex}");
       }
     }
+
+    // TODO: remove diagnostics after debugging
+    private static int lastLoggedOrigin = -1;
 
     public static void RevealArea(int originCell, int radius, float innerRadius)
     {
@@ -215,6 +230,16 @@ namespace DarknessNotIncluded
           }
         }
         catch { }
+
+        // TODO: remove diagnostics after debugging.
+        // Logs once per origin cell change to avoid spamming every Sim tick.
+        if (originCell != lastLoggedOrigin)
+        {
+          lastLoggedOrigin = originCell;
+          Debug.Log($"[DarknessNotIncluded][diag] RevealArea origin={originCell} radius={radius} " +
+                    $"strict={Config.instance?.occludeVisibilityByWalls} artificial={Config.instance?.occludeVisibilityByArtificialWallsOnly} " +
+                    $"branch={(anyOcclusionEnabled ? "LOS" : "Circle")}");
+        }
 
         if (anyOcclusionEnabled)
         {
