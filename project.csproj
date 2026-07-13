@@ -32,7 +32,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1" />
-    <PackageReference Include="PLib" Version="4.19.0" />
+    <PackageReference Include="PLib" Version="4.24.0" />
     <Reference Include="0Harmony">
       <HintPath>$(GameLibsDir)\0Harmony.dll</HintPath>
     </Reference>
