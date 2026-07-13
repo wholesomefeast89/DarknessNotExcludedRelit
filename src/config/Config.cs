@@ -12,6 +12,18 @@ using Klei; // add this
 
 namespace DarknessNotIncluded
 {
+  public enum VisionOcclusionMode
+  {
+    [Option("Off", "Nothing blocks Duplicants' line of sight.")]
+    Off,
+
+    [Option("Artificial tiles only", "Opaque built structures (constructed tiles, Ruins) block sight; natural minerals remain transparent.")]
+    ArtificialTilesOnly,
+
+    [Option("All solid tiles", "Any solid tile or building blocks sight.")]
+    AllSolidTiles,
+  }
+
   [JsonObject(MemberSerialization.OptOut)]
   [ModInfo("https://github.com/nevir/oni-darkness-not-excluded", "preview.png")]
   [ConfigFile(SharedConfigLocation: true)]
@@ -40,11 +52,32 @@ namespace DarknessNotIncluded
     [Limit(0, 255)]
     public int minimumFogLevel { get; set; }
 
-    [Option("Block visibility through walls", "Hides tiles/cells from line of sight when blocked by solid tiles.", "Darkness")]
-    public bool occludeVisibilityByWalls { get; set; }
+    [Option("Vision blocked by walls", "Controls which tiles block Duplicants' line of sight.\n\n<b>Off</b> — nothing blocks sight.\n<b>Artificial tiles only</b> — opaque built structures (constructed tiles, Ruins) block sight; natural minerals remain transparent. Transparent structures like Glass, Mesh or Airflow Tiles never block sight.\n<b>All solid tiles</b> — any solid tile or building blocks sight.", "Darkness")]
+    public VisionOcclusionMode visionOcclusionMode { get; set; } = VisionOcclusionMode.Off;
 
-    [Option("Block visibility through artificial walls only", "When 'Block visibility through walls' is off, this softer variant still blocks line of sight through opaque built structures (constructed tiles, Ruins) while natural minerals remain transparent. Transparent structures like Glass, Mesh or Airflow Tiles never block sight.", "Darkness")]
-    public bool occludeVisibilityByArtificialWallsOnly { get; set; }
+    // --- Backward compatibility with pre-enum configs (two separate checkboxes). ---
+    // Old config.json keys are migrated into visionOcclusionMode on load; strict
+    // mode wins if both were enabled. These properties are write-only on purpose:
+    // they deserialize legacy keys but are never serialized back.
+
+    [JsonProperty("occludeVisibilityByWalls")]
+    private bool legacyOccludeVisibilityByWalls
+    {
+      set { if (value) visionOcclusionMode = VisionOcclusionMode.AllSolidTiles; }
+    }
+
+    [JsonProperty("occludeVisibilityByArtificialWallsOnly")]
+    private bool legacyOccludeVisibilityByArtificialWallsOnly
+    {
+      set { if (value && visionOcclusionMode == VisionOcclusionMode.Off) visionOcclusionMode = VisionOcclusionMode.ArtificialTilesOnly; }
+    }
+
+    // Convenience accessors so existing call sites keep working unchanged.
+    [JsonIgnore]
+    public bool occludeVisibilityByWalls => visionOcclusionMode == VisionOcclusionMode.AllSolidTiles;
+
+    [JsonIgnore]
+    public bool occludeVisibilityByArtificialWallsOnly => visionOcclusionMode == VisionOcclusionMode.ArtificialTilesOnly;
 
     // Exploration
 
@@ -124,7 +157,7 @@ namespace DarknessNotIncluded
         minimumFogLevel = 0,
         sleepingDisturbedTicks = 0,
         penalizeStrength = true,
-        occludeVisibilityByWalls = true,
+        visionOcclusionMode = VisionOcclusionMode.AllSolidTiles,
       };
     }
 
@@ -137,7 +170,7 @@ namespace DarknessNotIncluded
         darknessInSandboxMode = true,
         dragToolIgnoresVisibility = false,
         telepadRevealRadius = 18,
-        occludeVisibilityByWalls = false,
+        visionOcclusionMode = VisionOcclusionMode.Off,
       };
     }
 
@@ -152,7 +185,7 @@ namespace DarknessNotIncluded
       gracePeriodCycles = 3.0f;
       initialFogLevel = 200;
       minimumFogLevel = 35;
-      occludeVisibilityByWalls = false;
+      visionOcclusionMode = VisionOcclusionMode.Off;
 
       // Exploration
       dragToolIgnoresVisibility = true;
